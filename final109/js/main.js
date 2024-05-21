@@ -27,6 +27,12 @@ let actionPant, actionTail;
 
 let mixer;
 
+const geometries = [];
+const urls = ["https://johnjsantos91.github.io/glitchart.html", "https://johnjsantos91.github.io/minecraft.html", "https://johnjsantos91.github.io/netart/index.html", "https://johnjsantos91.github.io/runwayml.html", "https://johnjsantos91.github.io/sketch.html", "https://johnjsantos91.github.io/index.html", "https://johnjsantos91.github.io/final.html", "https://johnjsantos91.github.io/video.html", "https://johnjsantos91.github.io/bio.html"];
+
+const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
 
 // ~~~~~~~~~~~~~~~~ Initialize Scene in init() ~~~~~~~~~~~~~~~~
 function init() {
@@ -77,13 +83,15 @@ function init() {
 
     // ~~~~~~ Create Geometry ~~~~~~
 
+    
+
     // ---> create capsule
     const geometry = new THREE.BoxGeometry(1, 1, .5);
 
     // -> change material from Basic to standard for geometry to capture lights
     // const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture = new THREE.TextureLoader().load('assets/IMG_1539.JPG');
+    const texture = new THREE.TextureLoader().load('assets/ga.jpg');
 
     const material = new THREE.MeshStandardMaterial({ map: texture });
     texture.minFilter = THREE.LinearFilter; 
@@ -91,16 +99,18 @@ function init() {
 
     ball = new THREE.Mesh(geometry, material);
     scene.add(ball);
+    geometries.push(ball);
 
     //CREATE cube2
     const geometry2 = new THREE.BoxGeometry(1, 1, 4);
     // const material2 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
     
-    const texture1 = new THREE.TextureLoader().load('assets/IMG_6494.PNG');
+    const texture1 = new THREE.TextureLoader().load('assets/pac.jpg');
     const material2 = new THREE.MeshStandardMaterial({ map: texture1 });
     texture1.minFilter = THREE.LinearFilter;
     ball2 = new THREE.Mesh(geometry2, material2);
     scene.add(ball2);
+    geometries.push(ball2);
 
     //CREATE cube3
     const geometry6 = new THREE.BoxGeometry(1, 1, 1);
@@ -111,16 +121,18 @@ function init() {
     texture2.minFilter = THREE.LinearFilter;
     ball3 = new THREE.Mesh(geometry6, material3);
     scene.add(ball3);
+    geometries.push(ball3);
     
     // CREATE cube4
     const geometry4 = new THREE.BoxGeometry(.5, .5, .5);
     // const material4 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture3 = new THREE.TextureLoader().load('assets/monster.JPG');
+    const texture3 = new THREE.TextureLoader().load('assets/run.jpg');
     const material4 = new THREE.MeshStandardMaterial({ map: texture3 });
     texture3.minFilter = THREE.LinearFilter;
     ball4 = new THREE.Mesh(geometry4, material4);
     scene.add(ball4);
+    geometries.push(ball4);
 
     // CREATE cube5
     const geometry5 = new THREE.BoxGeometry(.75, .75, 2);
@@ -131,48 +143,53 @@ function init() {
     texture4.minFilter = THREE.LinearFilter;
     ball5 = new THREE.Mesh(geometry5, material5);
     scene.add(ball5);
+    geometries.push(ball5);
 
     // CREATE cube6
     const geometry7 = new THREE.BoxGeometry(4, .5, 3);
     // const material4 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture5 = new THREE.TextureLoader().load('assets/frag.png');
+    const texture5 = new THREE.TextureLoader().load('assets/port.jpg');
     const material6 = new THREE.MeshStandardMaterial({ map: texture5 });
     texture5.minFilter = THREE.LinearFilter;
     ball6 = new THREE.Mesh(geometry7, material6);
     scene.add(ball6);
+    geometries.push(ball6);
 
     // CREATE cube7
     const geometry8 = new THREE.BoxGeometry(.1, 1, 1);
     // const material4 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture6 = new THREE.TextureLoader().load('assets/sc3.png');
+    const texture6 = new THREE.TextureLoader().load('assets/nat.jpg');
     const material7 = new THREE.MeshStandardMaterial({ map: texture6 });
     texture6.minFilter = THREE.LinearFilter;
     ball7 = new THREE.Mesh(geometry8, material7);
     scene.add(ball7);
+    geometries.push(ball7);
 
 
     // CREATE cube8
     const geometry9 = new THREE.BoxGeometry(1, 1, 1);
     // const material4 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture7 = new THREE.TextureLoader().load('assets/IMG_7845.jpg');
+    const texture7 = new THREE.TextureLoader().load('assets/vid.jpg');
     const material8 = new THREE.MeshStandardMaterial({ map: texture7 });
     texture7.minFilter = THREE.LinearFilter;
     ball8 = new THREE.Mesh(geometry9, material8);
     scene.add(ball8);
+    geometries.push(ball8);
     
 
     // CREATE cube9
     const geometry10 = new THREE.BoxGeometry(1, 1, 1);
     // const material4 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture8 = new THREE.TextureLoader().load('assets/IMG_7846.jpg');
+    const texture8 = new THREE.TextureLoader().load('assets/bio.jpg');
     const material9 = new THREE.MeshStandardMaterial({ map: texture8 });
     texture8.minFilter = THREE.LinearFilter;
     ball9 = new THREE.Mesh(geometry10, material9);
     scene.add(ball9);
+    geometries.push(ball9);
 
  
 
@@ -225,12 +242,35 @@ function init() {
     camera.position.z = 5;
 
 
+    
+
 }
 
 
 // ~~~~~~~~~~~~~~~~ Event Listener ~~~~~~~~~~~~~~~~
 
+function onMouseClick(event) {
+    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    // Update the raycaster with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera);
+
+    // Calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects(geometries);
+
+    if (intersects.length > 0) {
+        const clickedObject = intersects[0].object;
+        const index = geometries.indexOf(clickedObject);
+        if (index !== -1) {
+            const url = urls[index];
+            window.open(url, '_blank');
+        }
+    }
+}
+
+window.addEventListener('click', onMouseClick, false);
 // let mouseIsDown = false;
 
 
@@ -284,13 +324,13 @@ function animate() {
     
     ball3.position.x = 5;
     ball3.position.y = 5;
-    ball3.position.z = -7;
+    ball3.position.z = -3;
 
     //nightmare
     ball4.rotation.x += 0.010;
     ball4.rotation.y += 0.022;
     
-    ball4.position.x = 2;
+    ball4.position.x = 5;
     ball4.position.y = -1;
     ball4.position.z = 1;
 
@@ -384,6 +424,8 @@ function animate() {
     if(mixer) 
     mixer.update(clock.getDelta());
     renderer.render(scene, camera);
+
+   
 }
 
 function onWindowResize() {
