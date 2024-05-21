@@ -95,7 +95,7 @@ function init() {
     const geometry7 = new THREE.BoxGeometry(4, .5, 3);
     // const material4 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-    const texture5 = new THREE.TextureLoader().load('assets/frag.png');
+    const texture5 = new THREE.TextureLoader().load('assets/port.jpg');
     const material6 = new THREE.MeshStandardMaterial({ map: texture5 });
     texture5.minFilter = THREE.LinearFilter;
     ball6 = new THREE.Mesh(geometry7, material6);
